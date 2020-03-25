@@ -1,23 +1,8 @@
-/*
-*
-*
-*       Complete the API routing below
-*
-*
-*/
+const express = require('express');
+const router = express.Router();
 
-'use strict';
+const stockController = require('../controllers/stockController');
 
-var expect = require('chai').expect;
-var MongoClient = require('mongodb');
+router.get('/', stockController.getController);
 
-const CONNECTION_STRING = process.env.DB; //MongoClient.connect(CONNECTION_STRING, function(err, db) {});
-
-module.exports = function (app) {
-
-  app.route('/api/stock-prices')
-    .get(function (req, res){
-      
-    });
-    
-};
+module.exports = router;

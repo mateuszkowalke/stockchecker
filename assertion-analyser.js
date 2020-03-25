@@ -101,6 +101,8 @@ function assertionAnalyser(body) {
   // contain the word 'assertion'
 
   var body = body.match(/(?:browser\s*\.\s*)?assert\s*\.\s*\w*\([\s\S]*\)/)[0];
+
+
   var s = replacer(body);
   // split on 'assertion'
   var splittedAssertions = s.str.split('assert');

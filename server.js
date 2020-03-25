@@ -1,15 +1,32 @@
 'use strict';
 
-var express     = require('express');
-var bodyParser  = require('body-parser');
-var expect      = require('chai').expect;
-var cors        = require('cors');
+const express     = require('express');
+const bodyParser  = require('body-parser');
+const expect      = require('chai').expect;
+const cors        = require('cors');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv').config();
+const helmet = require('helmet')
 
-var apiRoutes         = require('./routes/api.js');
-var fccTestingRoutes  = require('./routes/fcctesting.js');
-var runner            = require('./test-runner');
+const apiRoutes         = require('./routes/api.js');
+const fccTestingRoutes  = require('./routes/fcctesting.js');
+const runner            = require('./test-runner');
 
-var app = express();
+const app = express();
+
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"]
+  }
+}))
+
+//Set up mongoose connection
+
+const mongoDB = process.env.DB;
+mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true });
+const db = mongoose.connection;
+db.on('connected', () => console.log('MongoDB connected succesfully'));
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
@@ -28,7 +45,7 @@ app.route('/')
 fccTestingRoutes(app);
 
 //Routing for API 
-apiRoutes(app);  
+app.use('/api/stock-prices', apiRoutes);  
     
 //404 Not Found Middleware
 app.use(function(req, res, next) {
